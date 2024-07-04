@@ -1,5 +1,6 @@
 import os
 import random
+import praw
 import asyncpraw  # https://asyncpraw.readthedocs.io/en/stable/getting_started/quick_start.html
 import anthropic
 #from google.colab import userdata
@@ -19,19 +20,18 @@ reddit_client_secret = os.environ["REDDIT_CLIENT_SECRET"]
 # Reddit stuff
 
 # Create a reddit object.
-reddit = asyncpraw.Reddit(
+reddit = praw.Reddit(
     client_id=reddit_client_id,
     client_secret=reddit_client_secret,
     user_agent='script:reddit_stream:v1.0 (by /u/bliiir)',
 )
 
 # Get a subreddit object for /r/scams.
-subreddit = await reddit.subreddit('scams', fetch=True)
+subreddit = reddit.subreddit('scams')
 
 # Fetch a number of posts and their comments.
 posts = {}
-async for post in subreddit.hot(limit=100):  # "hot" to "new" or "top"
-    await post.load()
+for post in subreddit.hot(limit=100):  # "hot" to "new" or "top"
     posts[post.id] = {}
     posts[post.id]['title'] = post.title
     posts[post.id]['url'] = post.url
